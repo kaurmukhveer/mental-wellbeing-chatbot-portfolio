@@ -1,20 +1,3 @@
-Use this as your FINAL polished README version.
-
-This version:
-
-* honestly reflects YOUR contributions,
-* gives credit properly,
-* avoids exaggeration,
-* stays NDA-safe,
-* is readable for recruiters,
-* understandable for non-technical people,
-* and still sounds technically strong.
-
-It also avoids sounding overly academic or overly AI-generated.
-
----
-
-```md id="g5i1zh"
 # Mental Wellbeing Chatbot Portfolio
 
 A fullstack AI-assisted mental wellbeing web application developed as an academic honours project under faculty supervision.
@@ -235,6 +218,50 @@ Potential future improvements include:
 - enhanced retrieval ranking
 - expanded wellbeing knowledge integration
 - improved deployment workflows
+
+---
+
+# Application Screenshots
+
+## Login Interface
+Secure login workflow with custom authentication and session handling.
+
+![Login Interface](screenshots/login-page.png)
+
+---
+
+## Registration Interface
+User registration workflow with secure password handling and account creation.
+
+![Signup Interface](screenshots/signup-page.png)
+
+---
+
+## AI Chat Interface
+Persistent AI-assisted conversation interface with grounded responses and session history.
+
+![Chat Interface](screenshots/chat-interface.png)
+
+---
+
+## Session Management
+Users could create, rename, revisit, and delete chat sessions while maintaining persistent conversation history.
+
+![Session Management](screenshots/session-management.png)
+
+---
+
+## Session Deletion Workflow
+Secure deletion workflow for managing user-specific chat history.
+
+![Delete Session](screenshots/delete-session.png)
+
+---
+
+## Domain-Constrained Responses
+The chatbot was intentionally designed to respond only within authorized mental wellbeing-related contexts to encourage safer and more grounded AI interactions.
+
+![Context Guardrails](screenshots/context-guardrails.png)
 
 ---
 
