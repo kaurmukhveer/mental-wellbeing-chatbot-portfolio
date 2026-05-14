@@ -91,6 +91,16 @@ REST APIs were used to connect the frontend and backend systems.
 
 ---
 
+## High-Level Architecture Diagram
+
+The application followed a modular layered architecture separating frontend interaction, backend APIs, authentication workflows, persistent storage, and AI-assisted retrieval pipelines.
+
+This structure improved maintainability, scalability, testing workflows, and component isolation.
+
+![System Architecture](docs/system-architecture.png)
+
+---
+
 # Technology Stack
 
 ## Frontend
