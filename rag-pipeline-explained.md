@@ -4,7 +4,11 @@ This document explains the high-level Retrieval-Augmented Generation (RAG) workf
 
 The goal of the RAG system was to improve response grounding and reduce hallucinated AI responses by retrieving information from authorized mental wellbeing reference material.
 
-Due to NDA and academic project restrictions, implementation details and source code are intentionally excluded.
+Due to a non-disclosure agreement (NDA) signed with the project supervisor, implementation details and source code are intentionally excluded.
+
+> **Ownership note:** The RAG pipeline was implemented by my project partner, using AI-assisted coding tools. My role was reviewing the code, agreeing on design choices such as chunk size, and manually testing the pipeline's behaviour. This document explains how the pipeline works, based on course instruction and my partner's walkthrough of her implementation.
+>
+> RAG was an optional extension in the project's fourth and final milestone, which we added for learning.
 
 ---
 
@@ -22,12 +26,12 @@ Because this project focused on mental wellbeing support, the application used R
 
 # High-Level Workflow
 
-1. Mental wellbeing reference material was divided into smaller text chunks
-2. Text chunks were converted into vector embeddings
-3. User queries were also converted into embeddings
-4. Similarity search retrieved the most relevant contextual information
-5. Retrieved context was added to the AI prompt
-6. The language model generated grounded responses using the retrieved context
+1. Mental wellbeing reference material was split into text chunks (we tested and agreed on a chunk size that gave the best retrieval results)
+2. Each chunk was converted into a vector embedding and stored in the database
+3. Each user query was converted into an embedding with the same model
+4. Similarity search compared the query embedding with the stored embeddings by vector distance and retrieved the **top 3** closest chunks
+5. The retrieved chunk text and the user's question were combined into a prompt, together with a predefined set of response rules (following guidelines from our professor)
+6. The language model generated a grounded response, following those rules and the retrieved context
 
 This helped the chatbot provide more context-aware and reliable responses.
 
@@ -38,6 +42,8 @@ This helped the chatbot provide more context-aware and reliable responses.
 The chatbot was intentionally designed to respond only within authorized mental wellbeing-related contexts.
 
 If users submitted unrelated prompts, the chatbot responded within its defined boundaries instead of generating unrestricted answers.
+
+**How I tested this:** I sent off-topic prompts and confirmed the chatbot stayed within its defined scope instead of answering freely (see the *Domain-Constrained Responses* screenshot in the README).
 
 This supported:
 - safer AI-assisted interactions
