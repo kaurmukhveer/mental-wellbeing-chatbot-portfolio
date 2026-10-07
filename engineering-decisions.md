@@ -2,7 +2,7 @@
 
 This document summarizes some of the major engineering and architectural decisions made during the development of the Mental Wellbeing Chatbot project.
 
-The project focused on building a secure, modular, and maintainable AI-assisted web application while balancing simplicity, scalability, and ethical AI interaction.
+The project focused on building a secure, modular, and maintainable AI-assisted web application while balancing simplicity, maintainability, and ethical AI interaction.
 
 ---
 
@@ -43,7 +43,6 @@ The application was designed using a layered architecture separating:
 This separation improved:
 - maintainability
 - debugging
-- scalability
 - component isolation
 - testing workflows
 
@@ -69,6 +68,14 @@ The authentication system used:
 - middleware authorization layers
 
 This approach strengthened understanding of backend security concepts and user session management.
+
+---
+
+# Why Route API Calls Through a Same-Origin Proxy?
+
+The frontend (Netlify) and backend (Render) were deployed on different domains. In production, browser cross-site cookie policies blocked the HTTP-only session cookie, so login succeeded but later authenticated requests failed with 401, even with `SameSite=None; Secure` configured.
+
+Instead of weakening cookie security, frontend requests were routed through a Netlify `/api` proxy that forwards to the Render backend. To the browser, the API is same-origin, so the session cookie is sent normally while keeping the HTTP-only and Secure protections.
 
 ---
 
@@ -130,7 +137,7 @@ Development practices included:
 - iterative feature refinement
 - agile-inspired sprint planning
 
-AI-assisted development tools were also used selectively to support frontend implementation and workflow acceleration.
+My partner used AI-assisted coding tools to build the frontend and the RAG component. I reviewed and tested that code before it was integrated. Every feature was manually tested before each push and deployment.
 
 ---
 
@@ -143,7 +150,6 @@ This project strengthened understanding of:
 - modular software design
 - REST API communication
 - Retrieval-Augmented Generation (RAG)
-- scalable system organization
 - collaborative software development
 - engineering tradeoff analysis
 - ethical AI-assisted systems
