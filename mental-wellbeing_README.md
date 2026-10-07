@@ -4,7 +4,7 @@ A fullstack AI-assisted mental wellbeing web application developed as an academi
 
 This repository is a public portfolio showcase focused on the system architecture, engineering decisions, workflows, and project learnings behind the application.
 
-Due to NDA and academic project restrictions, the source code and confidential implementation details are intentionally not included.
+Due to a non-disclosure agreement (NDA) signed with the project supervisor, the source code and confidential implementation details are intentionally not included.
 
 ---
 
@@ -58,12 +58,12 @@ The interface was intentionally designed to remain simple and minimal for access
 The chatbot used a Retrieval-Augmented Generation (RAG) workflow to improve response grounding and reduce hallucinated responses.
 
 High-level workflow:
-1. Mental wellbeing reference material was divided into smaller text chunks
-2. Text chunks were converted into vector embeddings
-3. User queries were converted into embeddings
-4. Similarity search retrieved the most relevant contextual information
-5. Retrieved context was injected into augmented prompts
-6. The language model generated grounded responses using the retrieved context
+1. Mental wellbeing reference material was split into text chunks (we tested and agreed on a chunk size that gave the best retrieval results)
+2. Each chunk was converted into a vector embedding and stored in the database
+3. Each user query was converted into an embedding with the same model
+4. Similarity search compared the query embedding with the stored embeddings by vector distance and retrieved the **top 3** closest chunks
+5. The retrieved chunk text and the user's question were combined into a prompt, together with a predefined set of response rules (following guidelines from our professor)
+6. The language model generated a grounded response, following those rules and the retrieved context
 
 The chatbot was intentionally restricted to responding within authorized mental wellbeing-related contexts.
 
@@ -71,31 +71,14 @@ The chatbot was intentionally restricted to responding within authorized mental 
 
 # System Architecture
 
-The application followed a modular layered architecture separating:
-- frontend UI
-- backend APIs
-- routing logic
-- controller logic
-- service-layer business logic
-- authentication middleware
-- database interactions
+The application used a modular, layered architecture, with REST APIs connecting the frontend and backend:
 
-This structure improved:
-- maintainability
-- debugging
-- scalability
-- component isolation
-- testing workflows
+- **Frontend:** React UI, with API calls centralized in a service layer
+- **Backend:** routes → controllers → services → repositories, plus authentication middleware
+- **Data:** Supabase (PostgreSQL) for users, chat sessions, and messages, plus vector search for retrieval
+- **AI:** retrieval-augmented generation (RAG) pipeline feeding grounded context to the language model
 
-REST APIs were used to connect the frontend and backend systems.
-
----
-
-## High-Level Architecture Diagram
-
-The application followed a modular layered architecture separating frontend interaction, backend APIs, authentication workflows, persistent storage, and AI-assisted retrieval pipelines.
-
-This structure improved maintainability, scalability, testing workflows, and component isolation.
+Keeping these layers separate made each part easier to debug and test independently.
 
 ![System Architecture](docs/system-architecture.png)
 
@@ -112,7 +95,14 @@ This structure improved maintainability, scalability, testing workflows, and com
 - Express.js
 
 ## Database
-- Supabase
+- Supabase (PostgreSQL, vector search)
+
+## AI
+- OpenAI API (embeddings and chat completion)
+
+## Deployment
+- Netlify (frontend)
+- Render (backend)
 
 ## Security
 - JWT Authentication
@@ -132,26 +122,23 @@ This structure improved maintainability, scalability, testing workflows, and com
 
 # My Contributions
 
-My primary contributions included:
-- backend API integration
-- authentication and authorization workflows
-- JWT token handling
-- middleware implementation
-- service-layer business logic
-- password encryption workflows
-- frontend-to-backend API communication
-- secure multi-user session handling
-- testing and debugging workflows
-- modular backend architecture integration
+This was a two-person project. My work focused on the **backend authentication and API layer**:
 
-I also collaborated closely on:
-- system architecture discussions
-- sprint planning
-- testing workflows
-- debugging
-- feature integration
+- **Authentication:** JWT generation and verification, bcrypt password hashing, and HTTP-only cookie session handling (`httpOnly`, `secure`, `sameSite`)
+- **Auth middleware:** reads the session cookie, verifies the JWT, and attaches the authenticated user to each request
+- **REST endpoints and controllers:** registration, login, logout, current-user (`/auth/me`), and chat
+- **Database connectivity:** Supabase client configuration, with service-role keys kept server-side only
+- **Documentation:** endpoint specifications written as part of the project handoff
+- **Testing:** manually tested every feature before each push and deployment, including the RAG pipeline (my partner's implementation) and its domain constraints: I sent off-topic prompts and confirmed the chatbot stayed in scope (see the *Domain-Constrained Responses* screenshot)
+- **Code review:** reviewed my partner's AI-assisted frontend and RAG code before integration
 
-The frontend UI implementation and major RAG implementation work were collaborative efforts completed with significant teamwork and learning throughout the project lifecycle.
+## Debugging highlight: cross-origin session cookies
+After deployment, login returned **200 OK** and set a cookie, but the next `/auth/me` request returned **401 Unauthorized**. Using browser DevTools (request/response headers, `Set-Cookie` behaviour, network inspection), I traced the cause: the Netlify frontend and the Render backend were on different domains, so browser cross-site cookie policies blocked the session cookie, even with `SameSite=None; Secure`. I fixed it by routing frontend requests through a Netlify `/api` proxy to the Render backend, which made the requests same-origin.
+
+More detail: [challenges-and-solutions.md](challenges-and-solutions.md) · [security-design.md](security-design.md) · [engineering-decisions.md](engineering-decisions.md)
+
+## Partner's work
+My project partner implemented the frontend UI and the RAG pipeline (chunking, embeddings, vector retrieval), using AI-assisted coding tools. RAG was an optional extension in the project's fourth and final milestone, which we added for learning. I learned the concepts through course instruction and her walkthrough of the implementation, agreed with her on the chunk size, and reviewed and tested the pipeline, but I did not build it.
 
 ---
 
@@ -167,7 +154,7 @@ Development practices included:
 - architecture discussions
 - iterative feature refinement
 
-AI-assisted tools were also used to support parts of frontend development and workflow acceleration.
+My partner used AI-assisted coding tools to build the frontend and the RAG component. I reviewed and tested that code before it was integrated.
 
 ---
 
@@ -177,7 +164,7 @@ The application was initially deployed using:
 - Netlify (frontend hosting)
 - Render (backend hosting)
 
-The deployment workflow later evolved toward a more containerized deployment setup.
+The final version of the application was containerized with Docker for deployment.
 
 While deployment responsibilities were collaborative, the project provided exposure to:
 - frontend/backend hosting workflows
