@@ -19,6 +19,22 @@ This improved understanding of backend security and session handling.
 
 ---
 
+# Cross-Origin Session Cookies in Production
+
+## Challenge
+After deployment, login returned **200 OK** and set a session cookie, but the next request to `/auth/me` returned **401 Unauthorized**. Everything worked locally.
+
+## Investigation
+Using browser DevTools, I inspected the request and response headers, the `Set-Cookie` behaviour, and the network traffic. The cookie was being set but not sent back on later requests. The root cause: the Netlify frontend and the Render backend were on different domains, so browser cross-site cookie policies blocked the cookie, even with `SameSite=None; Secure` configured.
+
+## Solution
+I routed frontend API calls through a Netlify `/api` proxy that redirects `/api/*` to the Render backend. The browser now treats API requests as same-origin, so the session cookie is sent normally and its HTTP-only and Secure protections are unchanged.
+
+## Lesson
+A local environment can hide production-only problems such as cross-origin behaviour. Tracing the actual request and response headers found the cause faster than guessing.
+
+---
+
 # Persistent User Sessions
 
 ## Challenge
@@ -70,7 +86,7 @@ The project was developed collaboratively using:
 - collaborative debugging
 - incremental feature integration
 
-AI-assisted development tools were also used selectively during development.
+My partner used AI-assisted coding tools to build the frontend and the RAG component. I reviewed and tested that code before it was integrated.
 
 ---
 
