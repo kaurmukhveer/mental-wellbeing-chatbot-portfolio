@@ -258,7 +258,7 @@ Secure deletion workflow for managing user-specific chat history.
 ## Domain-Constrained Responses
 The chatbot was intentionally designed to respond only within authorized mental wellbeing-related contexts to encourage safer and more grounded AI interactions.
 
-![Context Guardrails](screenshots/context-guardrails.png)
+![Context Guardrails](screenshots/contextual-guardrails.png)
 
 ---
 
