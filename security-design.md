@@ -4,7 +4,9 @@ This document summarizes the high-level security concepts and authentication des
 
 The goal of the system was to provide secure multi-user interaction while protecting user sessions, credentials, and conversation history.
 
-Due to NDA and project restrictions, implementation-level details and source code are intentionally excluded.
+Due to a non-disclosure agreement (NDA) signed with the project supervisor, implementation-level details and source code are intentionally excluded.
+
+> **My role:** I implemented the backend authentication layer described here: JWT handling, bcrypt password hashing, HTTP-only cookie sessions, and the authentication middleware.
 
 ---
 
@@ -33,6 +35,8 @@ At a high level:
 3. Tokens were securely validated through middleware
 4. Protected routes required valid authentication state
 
+Tokens were stored in **HTTP-only cookies** (with `secure` and `sameSite` settings), so client-side JavaScript cannot read them. This reduces the risk of token theft through cross-site scripting (XSS).
+
 This workflow helped maintain secure session handling across the application.
 
 ---
@@ -42,11 +46,10 @@ This workflow helped maintain secure session handling across the application.
 User passwords were never stored in plain text.
 
 The application used:
-- bcrypt hashing
-- salting techniques
-- encrypted password storage workflows
+- bcrypt hashing with per-password salts
+- storage of password hashes only (hashing is one-way, so the original password cannot be recovered)
 
-These practices improved protection against unauthorized credential exposure.
+This protects user credentials even if the database is exposed.
 
 ---
 
@@ -91,7 +94,9 @@ This approach improved security and deployment flexibility.
 
 # CORS and API Protection
 
-Cross-Origin Resource Sharing (CORS) configuration was used to help control frontend-backend communication and improve API security handling.
+Cross-Origin Resource Sharing (CORS) configuration was used to control which origins could call the backend API.
+
+In production, the frontend (Netlify) and backend (Render) ran on different domains, and browser cross-site cookie policies blocked the session cookie. This was resolved by routing API calls through a same-origin Netlify `/api` proxy, which kept the cookie's HTTP-only and Secure protections intact (see [challenges-and-solutions.md](challenges-and-solutions.md)).
 
 The backend architecture also separated:
 - routing logic
